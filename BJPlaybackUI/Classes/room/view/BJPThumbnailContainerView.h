@@ -13,7 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BJPThumbnailContainerView : UIView
 
 @property (nonatomic, copy, nullable) void (^tapCallback)(UIView *currentContentView);
-
+@property (nonatomic, copy, nullable) void (^closeCallback)(UIView *currentContentView);
+@property (nonatomic, weak) UIView *currentContentView;
 - (void)replaceContentWithPPTView:(UIView *)pptView;
 
 - (void)replaceContentWithPlayerView:(UIView *)playerView ratio:(CGFloat)ratio;

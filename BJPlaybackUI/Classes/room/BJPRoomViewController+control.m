@@ -106,10 +106,14 @@
             [self.room.playerManager changeDefinitionWithIndex:selectIndex];
         }
     }];
-    
+    // 关闭小屏幕
+    [self.thumbnailContainerView setCloseCallback:^(UIView * _Nonnull currentContentView) {
+        [self closeThumbnailViewWithContentView:currentContentView];
+    }];
     // 大小屏切换
     [self.thumbnailContainerView setTapCallback:^(UIView * _Nonnull currentContentView) {
         bjl_strongify(self);
+        return;
         UIAlertControllerStyle style = self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone ? UIAlertControllerStyleActionSheet : UIAlertControllerStyleAlert;
         UIAlertController *alert = [UIAlertController bjl_lightAlertControllerWithTitle:@"请选择" message:nil preferredStyle:style];
         // 切换大小屏
@@ -166,10 +170,11 @@
              BOOL hidden = self.playbackControlView.controlsHidden;
              
         if (!self.room.isInteractiveClass) {
-            self.controlView.usersButton.hidden = hidden;
-            self.controlView.thumbnailButton.hidden = hidden ?: !self.thumbnailContainerView.hidden;
-            self.controlView.messageButton.hidden = hidden;
-            self.controlView.questionButton.hidden = hidden;
+            self.controlView.usersButton.hidden = YES;
+//            self.controlView.thumbnailButton.hidden = hidden ?: !self.thumbnailContainerView.hidden;
+            self.controlView.thumbnailButton.hidden = NO;
+            self.controlView.messageButton.hidden = YES;
+            self.controlView.questionButton.hidden = YES;
             [self setNeedsStatusBarAppearanceUpdate];
            }
              return YES;
@@ -194,8 +199,11 @@
     // 显示小屏
     [self.controlView setShowThumbnailCallback:^{
         bjl_strongify(self);
-        self.thumbnailContainerView.hidden = NO;
-        self.controlView.thumbnailButton.hidden = YES;
+        if (self.thumbnailContainerView.hidden) {
+            self.thumbnailContainerView.hidden = NO;
+        } else {
+            [self switchViewToFullScreen:self.thumbnailContainerView.currentContentView];
+        }
     }];
     
     // 用户列表

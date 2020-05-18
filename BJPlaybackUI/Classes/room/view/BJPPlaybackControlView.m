@@ -34,7 +34,7 @@
 @property (nonatomic) BOOL isHorizontal;
 
 @property (nonatomic) BOOL shouldHiddenControlsForinteractive;
-
+@property (nonatomic) UILabel *titleLabel;
 @end
 
 @implementation BJPPlaybackControlView
@@ -58,7 +58,7 @@
     }];
     
     // topBar
-    CGFloat statusBarHeight = MAX(20.0, CGRectGetHeight([UIApplication sharedApplication].statusBarFrame));
+    CGFloat statusBarHeight = MAX(55.0, CGRectGetHeight([UIApplication sharedApplication].statusBarFrame)+10);
     [self addSubview:self.topBarView];
     [self.topBarView bjl_makeConstraints:^(BJLConstraintMaker *make) {
         make.top.left.right.equalTo(self);
@@ -80,11 +80,19 @@
     }];
     
     // cancel button
-    [self addSubview:self.cancelButton];
+    [self.topBarView addSubview:self.cancelButton];
     [self.cancelButton bjl_makeConstraints:^(BJLConstraintMaker *make) {
-        make.top.equalTo(self.topBarView.bjl_bottom).offset(BJPViewSpaceS);
-        make.right.equalTo(self.bjl_safeAreaLayoutGuide ?: self).offset(-BJPViewSpaceS);
-        make.size.equal.sizeOffset(CGSizeMake(30.0, 30.0));
+        make.left.equalTo(self.topBarView).offset(8.0);
+        make.centerY.equalTo(self.topBarView).offset(8.0);
+        make.width.equalTo(@24.0);
+        make.height.equalTo(@24.0);
+    }];
+    [self.topBarView addSubview:self.titleLabel];
+    [self.titleLabel bjl_makeConstraints:^(BJLConstraintMaker * _Nonnull make) {
+        make.left.equalTo(self.cancelButton.bjl_right).offset(8.0);
+        make.centerY.equalTo(self.cancelButton);
+        make.width.equalTo(self.topBarView.bjl_width).multipliedBy(0.5);
+        make.height.equalTo(self.topBarView.bjl_height);
     }];
 }
 
@@ -245,7 +253,7 @@
     }];
     
     [self.cancelButton bjl_updateConstraints:^(BJLConstraintMaker *make) {
-        make.right.equalTo(self.bjl_safeAreaLayoutGuide ?: self).offset(-margin);
+        make.left.equalTo(self.topBarView).offset(8.0);
     }];
 
     [self updateConstraintsForHorizontal:YES];
@@ -367,9 +375,9 @@
 
 - (void)setControlsHidden:(BOOL)hidden {
     _controlsHidden = hidden;
-    self.mediaControlView.hidden = hidden;
-    self.cancelButton.hidden = hidden;
-    self.topBarView.hidden = hidden;
+//    self.mediaControlView.hidden = hidden;
+//    self.cancelButton.hidden = hidden;
+//    self.topBarView.hidden = hidden;
 }
 
 #pragma mark - private
@@ -402,14 +410,45 @@
 - (void)setPlayControlButtonsEnabled:(BOOL)enabled {
     self.playButton.enabled = enabled;
 }
-
+#pragma mark - 渐变色 上到下
+- (UIImage*)gradientStartColor:(UIColor*)startColor endColor:(UIColor*)endColor frame:(CGRect)frame
+{
+    UIGraphicsBeginImageContext(frame.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathMoveToPoint(path, NULL, 0, 0);
+    CGPathAddLineToPoint(path, NULL, frame.size.width, 0);
+    CGPathAddLineToPoint(path, NULL, frame.size.width, frame.size.height);
+    CGPathAddLineToPoint(path, NULL, 0, frame.size.height);
+    CGPathCloseSubpath(path);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGFloat locations[] = { 0.0, 1.0 };
+    NSArray *colors = @[(__bridge id) startColor.CGColor, (__bridge id) endColor.CGColor];
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef) colors, locations);
+    CGRect pathRect = CGPathGetBoundingBox(path);
+    CGPoint startPoint = CGPointMake(CGRectGetMidX(pathRect), CGRectGetMinY(pathRect));
+    CGPoint endPoint = CGPointMake(CGRectGetMidX(pathRect), CGRectGetMaxY(pathRect));
+    CGContextSaveGState(context);
+    CGContextAddPath(context, path);
+    CGContextClip(context);
+    CGContextDrawLinearGradient(context, gradient, startPoint, endPoint, 0);
+    CGContextRestoreGState(context);
+    CGGradientRelease(gradient);
+    CGColorSpaceRelease(colorSpace);
+    CGPathRelease(path);
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return img;
+}
 #pragma mark - getters
 
 - (UIImageView *)topBarView {
     if (!_topBarView) {
         _topBarView = ({
-            UIImageView *imageView = [UIImageView new];
-            imageView.image = [UIImage bjp_imageNamed:@"bjp_bg_topbar"];
+            UIImageView *imageView = [[UIImageView alloc] initWithImage:[self gradientStartColor:[UIColor bjl_colorWithHexString:@"#707070" alpha:1.0] endColor:[UIColor bjl_colorWithHexString:@"#ffffff" alpha:1.0] frame:CGRectMake(0, 0, 100, 40)]];
+            imageView.backgroundColor = [UIColor blackColor];
+//            imageView.alpha = 0.8;
+            imageView.userInteractionEnabled = YES;
             [self addSubview:imageView];
             imageView;
         });
@@ -421,14 +460,24 @@
     if (!_cancelButton) {
         _cancelButton = ({
             UIButton *button = [[UIButton alloc] init];
-            [button setImage:[UIImage bjp_imageNamed:@"bjp_ic_exit"] forState:UIControlStateNormal];
+            [button setImage:[UIImage bjp_imageNamed:@"bjlback"] forState:UIControlStateNormal];
             [button addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchUpInside];
             button;
         });
     }
     return _cancelButton;
 }
-
+- (UILabel *)titleLabel{
+    if (!_titleLabel) {
+        UILabel *label = [UILabel new];
+        label.accessibilityLabel = BJLKeypath(self, titleLabel);
+        label.font = [UIFont systemFontOfSize:16.0];
+        label.textColor = [UIColor bjl_colorWithHexString:@"#ffffff" alpha:1.0];
+        label.text = @"课程标题";
+        _titleLabel = label;
+    }
+    return _titleLabel;
+}
 - (BJPReloadView *)reloadView {
     if (!_reloadView) {
         _reloadView = [[BJPReloadView alloc] init];

@@ -33,13 +33,13 @@
                                    selectedImage:nil
                                           action:@selector(showUsersView:)
                               accessibilityLabel:BJLKeypath(self, usersButton)];
-    self.thumbnailButton = [self makeButtonWithImage:[UIImage bjp_imageNamed:@"bjp_ic_video"]
-                                       selectedImage:[UIImage bjp_imageNamed:@"bjp_ic_ppt"]
+    self.thumbnailButton = [self makeButtonWithImage:[UIImage bjp_imageNamed:@"bjlchange"]
+                                       selectedImage:[UIImage bjp_imageNamed:@"bjlShowLitterScreen"]
                                               action:@selector(showThumbnailView:)
                                   accessibilityLabel:BJLKeypath(self, thumbnailButton)];
-    self.thumbnailButton.hidden = YES;
-    self.messageButton = [self makeButtonWithImage:[UIImage bjp_imageNamed:@"bjp_ic_msg_no"]
-                                     selectedImage:[UIImage bjp_imageNamed:@"bjp_ic_msg_no_on"]
+//    self.thumbnailButton.hidden = YES;
+    self.messageButton = [self makeButtonWithImage:[UIImage bjp_imageNamed:@"bjlCloseInfo"]
+                                     selectedImage:[UIImage bjp_imageNamed:@"bjlShowInfo"]
                                             action:@selector(showMessageView:)
                                 accessibilityLabel:BJLKeypath(self, messageButton)];
     self.questionButton = [self makeButtonWithImage:[UIImage bjp_imageNamed:@"bjp_ic_question"]
@@ -47,8 +47,8 @@
                                               action:@selector(showQuestionView:)
                                  accessibilityLabel:BJLKeypath(self, questionButton)];
     
-    self.rightButtons = [@[self.usersButton, self.thumbnailButton] mutableCopy];
-    self.bottomButtons = [@[self.messageButton] mutableCopy];
+    self.rightButtons = [@[self.messageButton, self.thumbnailButton] mutableCopy];
+    self.bottomButtons = [@[] mutableCopy];
     if (self.room.playbackInfo.enableQuestion) {
         [self.bottomButtons bjl_addObject:self.questionButton];
     }
@@ -84,6 +84,7 @@
 }
 
 - (void)showThumbnailView:(UIButton *)button {
+    button.selected = NO;
     if (self.showThumbnailCallback) {
         self.showThumbnailCallback();
     }

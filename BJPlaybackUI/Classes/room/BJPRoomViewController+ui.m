@@ -70,7 +70,7 @@
 
 // 首次触发时不能获取到正确班型
 - (void)updateConstraintsForHorizontal:(BOOL)isHorizontal {
-    CGFloat statusBarHeight = MAX(20.0, CGRectGetHeight([UIApplication sharedApplication].statusBarFrame));
+    CGFloat statusBarHeight = MAX(55.0, CGRectGetHeight([UIApplication sharedApplication].statusBarFrame)+10);
     CGSize thumbnailSize = CGSizeMake(100.0, 76.0);
     // fullScreenContainerView
     [self.fullScreenContainerView bjl_remakeConstraints:^(BJLConstraintMaker *make) {
@@ -91,9 +91,9 @@
         // messageView
         [self.messageViewContrller.view bjl_remakeConstraints:^(BJLConstraintMaker *make) {
             if (isHorizontal) {
-                make.top.equalTo(self.fullScreenContainerView).offset(statusBarHeight + thumbnailSize.height + BJPViewSpaceS);
+                make.top.equalTo(self.fullScreenContainerView).offset(statusBarHeight + thumbnailSize.height + BJPViewSpaceL);
                 make.right.equalTo(self.view.bjl_centerX);
-                make.bottom.equalTo(self.playbackControlView.bjl_safeAreaLayoutGuide ?: self.playbackControlView).offset(-BJPButtonSizeL -BJPButtonSizeM - BJPViewSpaceM);
+                make.bottom.equalTo(self.playbackControlView.bjl_safeAreaLayoutGuide ?: self.playbackControlView).offset(-BJPButtonSizeL - BJPViewSpaceM);
             }
             else {
                 make.top.equalTo(self.fullScreenContainerView.bjl_bottom).offset(BJPViewSpaceS).priorityHigh();
@@ -107,8 +107,8 @@
         [self.thumbnailContainerView setTouchMoveEnable:isHorizontal];
         [self.thumbnailContainerView bjl_remakeConstraints:^(BJLConstraintMaker *make) {
             if (isHorizontal) {
-                make.top.equalTo(self.fullScreenContainerView).offset(statusBarHeight);
-                make.left.equalTo(self.view.bjl_safeAreaLayoutGuide ?: self.view);
+                make.top.equalTo(self.fullScreenContainerView).offset(statusBarHeight+50);
+                make.right.equalTo(self.view.bjl_safeAreaLayoutGuide ?: self.view);
             }
             else {
                 make.top.equalTo(self.fullScreenContainerView.bjl_bottom);
@@ -161,8 +161,10 @@
 
 - (void)closeThumbnailViewWithContentView:(UIView *)contentView {
     self.thumbnailContainerView.hidden = YES;
-    self.controlView.thumbnailButton.selected = (contentView != self.room.playerManager.playerView);
-    self.controlView.thumbnailButton.hidden = self.playbackControlView.controlsHidden;;
+    self.controlView.thumbnailButton.selected = YES;
+
+//    self.controlView.thumbnailButton.selected = (contentView != self.room.playerManager.playerView);
+//    self.controlView.thumbnailButton.hidden = self.playbackControlView.controlsHidden;;
 }
 
 - (void)cleanOverlayViews {

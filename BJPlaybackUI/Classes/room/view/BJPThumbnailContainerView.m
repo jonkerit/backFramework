@@ -12,8 +12,8 @@
 @interface BJPThumbnailContainerView ()
 
 @property (nonatomic) BOOL touchMoveEnable;
-@property (nonatomic, weak) UIView *currentContentView;
 @property (nonatomic) UIButton *titleButton;
+@property (nonatomic) UIButton *closeButton;
 
 @end
 
@@ -38,8 +38,14 @@
 - (void)setupSubviews {
     // titleButton
     [self addSubview:self.titleButton];
+    [self addSubview:self.closeButton];
+
     [self.titleButton bjl_makeConstraints:^(BJLConstraintMaker *make) {
         make.centerX.bottom.equalTo(self);
+    }];
+    [self.closeButton bjl_makeConstraints:^(BJLConstraintMaker * _Nonnull make) {
+        make.top.right.equalTo(self);
+        make.width.height.equalTo(@(20));
     }];
 }
 
@@ -50,7 +56,11 @@
         self.tapCallback(self.currentContentView);
     }
 }
-
+- (void)closeAction{
+    if (self.closeCallback) {
+        self.closeCallback(self.currentContentView);
+    }
+}
 #pragma mark - public
 
 - (void)replaceContentWithPPTView:(UIView *)pptView {
@@ -77,7 +87,7 @@
         }
     }];
     // 显示/隐藏 名字及占位图
-    self.titleButton.hidden = NO;
+    self.titleButton.hidden = YES;
 }
 
 - (void)replaceContentWithView:(UIView *)view {
@@ -145,5 +155,12 @@
     }
     return _titleButton;
 }
-
+- (UIButton *)closeButton{
+    if (!_closeButton) {
+        _closeButton =  [UIButton buttonWithType:UIButtonTypeCustom];
+        [_closeButton setImage:[UIImage bjp_imageNamed:@"bjlClose"] forState:UIControlStateNormal];
+        [_closeButton addTarget:self action:@selector(closeAction) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _closeButton;;
+}
 @end
