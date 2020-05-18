@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
         "CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES" => "YES" # requies both `user_target_xcconfig` and `pod_target_xcconfig`
     }
     
-    s.default_subspecs = ['static']
+    s.default_subspecs = ['static.source']
     
     ## 默认集成framework
     s.subspec 'static' do |ss|
