@@ -36,14 +36,14 @@ Pod::Spec.new do |s|
     s.default_subspecs = ['static.source']
     
     ## 默认集成framework
-    s.subspec 'static' do |ss|
+    #s.subspec 'static' do |ss|
         ## framework
-        ss.ios.preserve_paths       = 'frameworks/BJPlaybackUI.framework'
-        ss.ios.source_files         = 'frameworks/BJPlaybackUI.framework/Versions/A/Headers/**/*.h'
-        ss.ios.public_header_files  = 'frameworks/BJPlaybackUI.framework/Versions/A/Headers/**/*.h'
-        ss.ios.resource             = 'frameworks/BJPlaybackUI.framework/Versions/A/Resources/BJPlaybackUI.bundle'
-        ss.ios.vendored_frameworks  = 'frameworks/BJPlaybackUI.framework'
-    end
+        #ss.ios.preserve_paths       = 'frameworks/BJPlaybackUI.framework'
+       # ss.ios.source_files         = 'frameworks/BJPlaybackUI.framework/Versions/A/Headers/**/*.h'
+       #ss.ios.public_header_files  = 'frameworks/BJPlaybackUI.framework/Versions/A/Headers/**/*.h'
+        #ss.ios.resource             = 'frameworks/BJPlaybackUI.framework/Versions/A/Resources/BJPlaybackUI.bundle'
+        #ss.ios.vendored_frameworks  = 'frameworks/BJPlaybackUI.framework'
+   # end
     
     ## 集成源码
     s.subspec 'static.source' do |ss|
