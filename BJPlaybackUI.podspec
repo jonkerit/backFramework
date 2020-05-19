@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
     s.ios.deployment_target = '9.0'
     
-    s.source           = { :git => 'https://github.com/jonkerit/backFramework.git', :tag => s.version.to_s }
+    s.source           = { :git => "https://github.com/jonkerit/backFramework.git", :tag => s.version.to_s }
     s.frameworks = ['CoreGraphics', 'Foundation', 'MobileCoreServices', 'Photos', 'UIKit']
     
     s.requires_arc = true
