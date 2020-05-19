@@ -15,7 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface BJPRoomViewController : UIViewController
-
+/// 修改了
 /** 回放教室
  参考 `BJPlaybackCore` */
 @property (nonatomic, readonly, nullable) BJVRoom *room;
